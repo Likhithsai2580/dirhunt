@@ -96,6 +96,7 @@ class CrawlerUrl(object):
             self.exists = True
         self.add_self_directories(True if (not self.maybe_rewrite() and self.exists) else None,
                                   'directory' if not self.maybe_rewrite() else None)
+        self.identify_false_404(resp, text)
         self.close()
         return self
 
@@ -141,3 +142,9 @@ class CrawlerUrl(object):
             'type': self.type,
             'exists': self.exists,
         }
+
+    def identify_false_404(self, resp, text):
+        if resp.status_code == 404 and self.exists is None:
+            if '404' not in text.lower():
+                self.exists = True
+                self.flags.add('not_found.fake')

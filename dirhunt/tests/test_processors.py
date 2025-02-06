@@ -88,6 +88,16 @@ class TestProcessNotFound(CrawlerTestBase, unittest.TestCase):
         process = ProcessNotFound(None, crawler_url)
         str(process)
 
+    def test_identify_false_404(self):
+        crawler_url = self.get_crawler_url()
+        process = ProcessNotFound(None, crawler_url)
+        resp = requests.Response()
+        resp.status_code = 404
+        text = "This is a test page without the 404 keyword."
+        process.crawler_url.identify_false_404(resp, text)
+        self.assertTrue(process.crawler_url.exists)
+        self.assertIn('not_found.fake', process.crawler_url.flags)
+
 
 class TestProcessCssStyleSheet(CrawlerTestBase, unittest.TestCase):
     css = 'body { background-image: url("img/foo.png") }'

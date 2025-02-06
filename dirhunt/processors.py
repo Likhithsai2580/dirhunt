@@ -225,6 +225,8 @@ class ProcessNotFound(ProcessBase):
 
     def process(self, text, soup=None):
         self.search_index_files()
+        if self.crawler_url.exists:
+            self.crawler_url.flags.add('not_found.fake')
 
     @classmethod
     def is_applicable(cls, request, text, crawler_url, soup):
